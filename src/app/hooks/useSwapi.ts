@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 
-// Interface para tipar os dados da resposta da API
 interface SwapiData {
-  results: any[]; // Resultados da pesquisa
-  next: string | null; // Link para a próxima página (pode ser nulo)
-  previous: string | null; // Link para a página anterior (pode ser nulo)
+  results: any[]; // resultados da pesquisa
+  next: string | null; // link para a próxima página (ou nulo)
+  previous: string | null; // link para a página anterior (ou nulo)
 }
 
 interface FetchResponse {
@@ -14,11 +13,11 @@ interface FetchResponse {
 }
 
 const useSwapi = (resource: string, searchTerm: string) => {
-  const [data, setData] = useState<SwapiData | null>(null); // Estado para os dados da API
-  const [loading, setLoading] = useState<boolean>(false); // Estado para carregamento
-  const [error, setError] = useState<string | null>(null); // Estado para erros
+  const [data, setData] = useState<SwapiData | null>(null); // estado para os dados da API
+  const [loading, setLoading] = useState<boolean>(false); // estado para carregamento
+  const [error, setError] = useState<string | null>(null); // estado para erros
 
-  // Função para buscar os dados da SWAPI
+  // função para buscar os dados da SWAPI
   const fetchData = async () => {
     setLoading(true);
     setError(null);
@@ -27,14 +26,14 @@ const useSwapi = (resource: string, searchTerm: string) => {
       const response = await fetch(`https://swapi.dev/api/${resource}/?search=${searchTerm}`);
       const data: FetchResponse = await response.json();
 
-      // Adaptar os dados para o tipo SwapiData
+      // adaptar os dados para o tipo SwapiData
       const swapiData: SwapiData = {
         next: data.next,
         previous: data.previous,
         results: data.results,
       };
 
-      // Atualiza o estado com os dados obtidos
+      // atualiza o estado com os dados obtidos
       setData(swapiData);
     } catch (err) {
       setError('Erro ao carregar os dados');
@@ -43,14 +42,14 @@ const useSwapi = (resource: string, searchTerm: string) => {
     }
   };
 
-  // Hook useEffect para disparar a requisição toda vez que o resource ou searchTerm mudarem
+  // hook useEffect para disparar a requisição toda vez que o resource ou searchTerm mudarem
   useEffect(() => {
     if (searchTerm) {
       fetchData();
     }
-  }, [searchTerm, resource]); // Dependências para disparar quando searchTerm ou resource mudarem
+  }, [searchTerm, resource]); // dependências para disparar quando searchTerm ou resource mudarem
 
-  // Função para obter a URL da imagem com base no ID
+  // função para obter a URL da imagem com base no ID
   const getImageUrl = (resource: string, id: string): string => {
     const resourceMap: { [key: string]: string } = {
       people: "characters",
@@ -67,7 +66,7 @@ const useSwapi = (resource: string, searchTerm: string) => {
       : "https://starwars-visualguide.com/assets/img/placeholder.jpg";
   };
 
-  // Retorna os dados, loading, error e a função de obter a URL da imagem
+  // retorna os dados, loading, error e a função de obter a URL da imagem
   return { data, loading, error, getImageUrl };
 };
 
